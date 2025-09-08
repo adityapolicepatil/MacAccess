@@ -412,7 +412,7 @@ def handle_command(command):
         print("Unknown command:", command)
 
 def verify_auth(req):
-    if caesar_decrypt(req.headers.get("X-API-Key"),147) != API_KEY:
+    if caesar_decrypt(req.headers.get("X-API-Key"),0) != API_KEY:
         abort(401, "Invalid API key")
 
     ts = req.headers.get("X-Timestamp")
