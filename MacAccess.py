@@ -19,8 +19,8 @@ app = Flask(__name__)
 mutePressed = False
 volumePreMute = 50
 isLoopOn = False
-API_KEY = os.environ.get("MACRO_API_KEY", "MacAccessIsMadeByTheGoat")
-HMAC_SECRET = os.environ.get("MACRO_HMAC_SECRET", "MacAccessIsGoatedInItself")
+API_KEY = os.environ.get("MACRO_API_KEY", "")
+HMAC_SECRET = os.environ.get("MACRO_HMAC_SECRET", "")
 REPLAY_WINDOW_SEC = 60                                       
 SEEN_NONCES = set()
 
