@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- open ~/IoT/start_macroKeyboard.command -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mac Controller</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background: #23272f;
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .weather-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #353b48;
+            border-radius: 18px;
+            padding: 25px 30px 18px 30px;
+            box-shadow: 0 4px 36px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
+            width: 95vw;
+            max-width: 480px;
+        }
+
+        .weather-card :hover {
+            cursor: pointer;
+        }
+
+        .weather-logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #f6d365;
+        }
+
+        .weather-info {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .humidity-info {
+            font-size: 18px;
+            margin-bottom: 0;
+            color: #56ccf2;
+        }
+
+        .slider-box {
+            width: 85vw;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            margin: 24px 0 28px 0;
+        }
+
+        .slider-icon {
+            font-size: 22px;
+            margin-right: 14px;
+            color: #74b9ff;
+        }
+
+        .slider {
+            flex: 1;
+            accent-color: #00b894;
+            height: 18px;
+            margin: 0;
+        }
+
+        .slider-value {
+            min-width: 36px;
+            margin-left: 10px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 24px;
+        }
+
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            background: #24292f;
+            border: none;
+            color: #fff;
+            font-size: 26px;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, .14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            transition: background 0.16s, transform 0.14s;
+            cursor: pointer;
+        }
+
+        .control-btn:active {
+            background: #353b48;
+            transform: scale(.95);
+        }
+
+        .controls-row1,
+        .controls-row2,
+        #controls-row3 {
+
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 18px 0 0 0;
+            margin-bottom: 20px;
+        }
+
+        .action-btn1,
+        .action-btn2 {
+            background: #636e72;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            padding: 15px 7px;
+            font-size: 16px;
+            min-width: 80px;
+            font-weight: 600;
+            box-shadow: 0 1px 6px rgba(44, 62, 80, 0.14);
+            cursor: pointer;
+            transition: background 0.15s, transform 0.14s;
+        }
+
+        .action-btn1:last-child {
+            background: #b71540;
+        }
+
+        .action-btn1 :active,
+        .action-btn2 :active {
+            background: #353b48;
+            transform: scale(.97);
+        }
+
+        #confirm-modal-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(30, 33, 40, 0.48);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #confirm-modal {
+            background: #fafafa;
+            color: #23272f;
+            border-radius: 16px;
+            padding: 24px 22px 17px 22px;
+            min-width: 220px;
+            max-width: 85vw;
+            box-shadow: 0 6px 32px rgba(44, 62, 80, 0.21);
+            text-align: center;
+        }
+
+        #confirm-text {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .confirm-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        #confirm-yes,
+        #confirm-no {
+            padding: 10px 22px;
+            font-size: 17px;
+            border-radius: 8px;
+            border: none;
+            background: #636e72;
+            color: #fff;
+            box-shadow: 0 1px 5px rgba(44, 62, 80, 0.13);
+            transition: background .15s, transform .13s;
+        }
+
+        #confirm-yes {
+            background: #00b894;
+        }
+
+        #confirm-no {
+            background: #b71540;
+        }
+
+        #confirm-yes:active,
+        #confirm-no:active {
+            transform: scale(0.96);
+        }
+
+        .search-box-container {
+            display: flex;
+            align-items: center;
+            max-width: 480px;
+            width: 95vw;
+            background: #353b48;
+            border-radius: 18px;
+            box-shadow: 0 4px 36px rgba(0, 0, 0, 0.3);
+            padding: 10px 18px;
+            margin: 20px 0;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f5f6fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 18px;
+            padding: 8px 12px;
+        }
+
+        .search-input::placeholder {
+            color: #a4b0be;
+            font-weight: 500;
+        }
+
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: #f6d365;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s ease;
+        }
+
+        .search-btn:hover {
+            color: #ffd56b;
+        }
+
+        .search-btn:active {
+            color: #d4a72a;
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+    <div class="weather-card" onclick="sendCmd('Weather')">
+        <div class="weather-logo"><i class="fas fa-cloud-sun"></i></div>
+        <div class="weather-info"><span id="temp-value"></span>&deg;C</div>
+        <div class="humidity-info">Humidity: <span id="humidity-value"></span>%</div>
+    </div>
+    <div class="search-box-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Search..." autocomplete="off" />
+        <button id="search-btn" class="search-btn" aria-label="Search">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <div class="slider-box">
+        <i class="fas fa-volume-up slider-icon"></i>
+        <input type="range" min="0" max="50" step="1" value="25" id="volume-slider" class="slider">
+        <span class="slider-value" id="volume-label">25</span>
+    </div>
+    <div class="controls-row">
+        <button class="control-btn" id="prev-btn" onclick="sendCmd('buttonOneSingleClick')"><i
+                class="fas fa-backward"></i></button>
+        <button class="control-btn" id="playpause-btn"><i class="fas fa-pause"></i></button>
+        <button class="control-btn" id="next-btn" onclick="sendCmd('buttonThreeSingleClick')"><i
+                class="fas fa-forward"></i></button>
+    </div>
+    <div class="controls-row1">
+        <button class="action-btn1">Loop</button>
+        <button class="action-btn1">Sleep</button>
+        <button class="action-btn1">Close application</button>
+        <button class="action-btn1">Shut down</button>
+    </div>
+    <div class="controls-row2">
+        <button class="action-btn2" onclick="handleTimer('30MinTimer')">30 Min Timer</button>
+        <button class="action-btn2" onclick="handleTimer('1HrTimer')">1 Hr Timer</button>
+    </div>
+    <div id="controls-row3" onclick="handleTimer('CancelTimer')">
+    </div>
+    <div id="confirm-modal-bg" style="display:none;">
+        <div id="confirm-modal">
+            <div id="confirm-text"></div>
+            <div class="confirm-row">
+                <button id="confirm-yes">Yes</button>
+                <button id="confirm-no">No</button>
+            </div>
+        </div>
+    </div>
+    <pre id="output"></pre>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script>
+        let TempHum = 0;
+        let countdownIntervalId = null;
+        const SERVER_URL = "https://192.168.1.104:5050/action";
+        const API_KEY = caesarEncrypt("MacAccessIsMadeByTheGoat",147);
+        const HMAC_SECRET = "MacAccessIsGoatedInItself";
+
+        let volume = 25;
+        const slider = document.getElementById('volume-slider');
+        const label = document.getElementById('volume-label');
+        slider.value = volume;
+        label.textContent = volume;
+        slider.addEventListener('input', function () {
+            volume = Number(this.value);
+            label.textContent = volume;
+            sendCmd(volume);
+        });
+
+        let playing = true;
+        const playpauseBtn = document.getElementById('playpause-btn');
+        playpauseBtn.addEventListener('click', function () {
+            playing = !playing;
+            sendCmd('buttonTwoSingleClick');
+            this.innerHTML = `<i class="fas fa-${playing ? 'pause' : 'play'}"></i>`;
+        });
+
+        function randomNonce(len = 8) {
+            const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            let out = "";
+            for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+            return out;
+        }
+
+        function caesarEncrypt(text, shift) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (char.match(/[A-Z]/)) {
+                    result += String.fromCharCode(((char.charCodeAt(0) - 65 + shift) % 26) + 65);
+                } else if (char.match(/[a-z]/)) {
+                    result += String.fromCharCode(((char.charCodeAt(0) - 97 + shift) % 26) + 97);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        async function sendCmd(cmd) {
+            const ts = Math.floor(Date.now() / 1000);
+            const nonce = randomNonce();
+            const body = JSON.stringify({ cmd });
+            const signed = `${ts}.${nonce}.${body}`;
+
+            const sig = CryptoJS.HmacSHA256(signed, HMAC_SECRET).toString();
+
+            try {
+                const res = await fetch(SERVER_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-Key": API_KEY,
+                        "X-Timestamp": ts,
+                        "X-Nonce": nonce,
+                        "X-Signature": sig
+                    },
+                    body
+                });
+                let text = await res.text();
+                console.log((text.toString()).length == 8);
+                if ((text.toString()).length == 8) {
+                    TempHum = parseInt(text);
+                    handleTempHum();
+                    text = '{\n  "status": "ok"\n}';
+                }
+                document.getElementById("output").textContent = `Response (${res.status}):\n${text}`;
+            } catch (err) {
+                document.getElementById("output").textContent = "Fetch error: " + err;
+            }
+        }
+
+        function showConfirm(label, callback) {
+            document.getElementById('confirm-text').innerText =
+                'Are you sure you want to ' + label + '?';
+            document.getElementById('confirm-modal-bg').style.display = 'flex';
+
+            const yesBtn = document.getElementById('confirm-yes');
+            const noBtn = document.getElementById('confirm-no');
+            yesBtn.onclick = () => {
+                document.getElementById('confirm-modal-bg').style.display = 'none';
+                callback(true);
+            };
+            noBtn.onclick = () => {
+                document.getElementById('confirm-modal-bg').style.display = 'none';
+                callback(false);
+            };
+        }
+
+        function handleTempHum() {
+            if (TempHum == 0) {
+                document.getElementById("temp-value").innerHTML = "__.__";
+                document.getElementById("humidity-value").innerHTML = "__.__"
+            }
+            else {
+                let aInt = Math.floor(TempHum / 10000);
+                let bInt = TempHum % 10000;
+
+                let a = aInt / 100.0;
+                let b = bInt / 100.0;
+
+                document.getElementById("temp-value").innerHTML = a.toString();
+                document.getElementById("humidity-value").innerHTML = b.toString();
+            }
+        }
+        handleTempHum();
+
+        function startCountdown(durationMinutes) {
+            if (countdownIntervalId !== null) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+
+            var countDownDate = new Date().getTime() + durationMinutes * 60 * 1000;
+
+            function updateCountdown() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (distance < 0) {
+                    clearInterval(countdownIntervalId);
+                    countdownIntervalId = null;
+                    document.getElementById("controls-row3").innerHTML = "";
+                } else {
+                    document.getElementById("timerCountdown").innerHTML = minutes + "m " + seconds + "s ";
+                }
+            }
+
+            updateCountdown();
+
+            countdownIntervalId = setInterval(updateCountdown, 1000);
+        }
+
+        function handleTimer(duration) {
+            if (duration == "CancelTimer") {
+                showConfirm("Cancel the timer", function (confirmed) {
+                    if (confirmed) {
+                        sendCmd("CancelTimer");
+                        document.getElementById("controls-row3").innerHTML = "";
+                    }
+                })
+            }
+            else {
+                document.getElementById("controls-row3").innerHTML = '<h3 id = "timerCountdown"></h3>';
+                if (duration == "30MinTimer") {
+                    startCountdown(30);
+                }
+                else {
+                    startCountdown(60);
+                }
+                sendCmd(duration);
+            }
+        }
+
+        function storeSearchValue(value) {
+            document.getElementById('search-input').innerHTML = "";
+            sendCmd("Play " + value);
+            console.log("Stored search value:", value);
+        }
+
+        const input = document.getElementById('search-input');
+        const btn = document.getElementById('search-btn');
+
+        function handleSearch() {
+            const value = input.value.trim();
+            if (value) storeSearchValue(value);
+        }
+
+        btn.addEventListener('click', handleSearch);
+
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleSearch();
+            }
+        });
+
+        document.querySelectorAll('.action-btn1').forEach((btn, idx) => {
+            btn.addEventListener('click', function () {
+                let label = this.textContent;
+                if (idx == 1) {
+                    label = "put it to " + this.textContent;
+                }
+                if (idx === 0) {
+                    sendCmd('buttonTwoDoubleClick');
+                } else {
+                    showConfirm(label, function (confirmed) {
+                        if (confirmed) {
+                            if (label == "Shut down") {
+                                sendCmd("buttonFourLongPress");
+                                console.log("shut");
+                            }
+                            else if (label == "put it to Sleep") {
+                                console.log("buttonSixLongPress");
+                                sendCmd("buttonSixLongPress");
+                            }
+                            else if (label == "Close application") {
+                                sendCmd("buttonFourDoubleClick");
+                                console.log("close");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
