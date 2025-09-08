@@ -511,6 +511,6 @@ if __name__ == "__main__":
 
     threading.Thread(target=serial_loop, daemon=True).start()
 
-    app.run(host="192.168.1.104", port=5050, ssl_context=("cert.pem", "key.pem"), debug=True, use_reloader=False)
+    app.run(host="'ipaddress", port=5050, ssl_context=("cert.pem", "key.pem"), debug=True, use_reloader=False)
 
 # nano /Users/aditya/Library/LaunchAgents/macroKeyboard.plist
